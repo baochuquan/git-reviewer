@@ -66,14 +66,14 @@ class Myers
   def solution(vs, m, n, d)
     snakes = []
     # 定义位置结构
-    p = { x: m, y: n }
+    pos = { x: m, y: n }
 
     # 回溯最短编辑路径
     while d > 0
       v = vs[d]
       vPrev = vs[d - 1]
 
-      k = p[:x] - p[:y]
+      k = pos[:x] - pos[:y]
       # 判断之前位置到当前位置最开始移动的方式，向下或向右
       down = ((k == -d) || ((k != d) && (vPrev[k + 1] > vPrev[k - 1])))
       kPrev = down ? k + 1 : k - 1
@@ -92,8 +92,8 @@ class Myers
 
       snakes.unshift([xStart, xMid, xEnd])
 
-      p[:x] = xStart
-      p[:y] = yStart
+      pos[:x] = xStart
+      pos[:y] = yStart
 
       d -= 1
     end
