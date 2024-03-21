@@ -35,9 +35,14 @@ class BlameLine
         @code = code
     end
 
-    def uuid 
-        # 不包含行号
-        string = hash + user + date + code 
-        return Digest::MD5.hexdigest(string)
+    # def uuid 
+    #     # 不包含行号
+    #     string = hash + user + date + code 
+    #     return Digest::MD5.hexdigest(string)
+    # end
+
+    # 用于 Myers 中进行判等操作
+    def ==(other) 
+        other.is_a?(BlameLine) && other.code == @code 
     end
 end
