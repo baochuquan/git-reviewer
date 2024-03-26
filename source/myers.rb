@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 class Myers
+  # Type: BlameFile
   attr_accessor :source, :target
 
   def initialize(source, target)
@@ -8,10 +9,14 @@ class Myers
     self.target = target
   end
 
-  def myers(stra, strb)
+  def myers
     # 字符串 a 和 b 的长度，分别为 n 和 m
-    m = stra.length
-    n = strb.length
+    print("source => #{source.filename}\n")
+    print("#{source.blameLines.count}\n")
+    print("target => #{target.filename}\n")
+    print("#{target.blameLines.count}\n")
+    m = source.blameLines.count
+    n = target.blameLines.count
 
     # 用于存储每条 K 线上最佳位置的 Map
     v = { 1 => 0 }
@@ -37,7 +42,7 @@ class Myers
           yEnd = yMid
 
           # 向右下移动，深度始终不变
-          while xEnd < m && yEnd < n && stra[xEnd] == strb[yEnd]
+          while xEnd < m && yEnd < n && source.blameLines[xEnd] == target.blameLines[yEnd]
             xEnd += 1
             yEnd += 1
           end
@@ -53,7 +58,7 @@ class Myers
             # 生成最短编辑路径
             snakes = solution(vs, m, n, d)
             # 打印最短编辑路径
-            printDiff(snakes, stra, strb)
+            printDiff(snakes)
             return
           end
         end
@@ -100,7 +105,7 @@ class Myers
     snakes
   end
 
-  def printDiff(snakes, stra, strb)
+  def printDiff(snakes)
     diffresult = ''
     yOffset = 0
 
@@ -113,24 +118,25 @@ class Myers
       if index === 0 && s != 0
         # 打印所有相同字符，直到s
         (0..s - 1).each do |j|
-          diffresult += "  #{stra[j]}\n"
+          # diffresult += "  #{source.blameLines[j].description}\n"
           yOffset += 1
         end
       end
       if m - s == 1
         # 用红色打印删除的字符
-        diffresult += "\033[0;31m- #{stra[s]}\033[0m\n"
+        diffresult += "\033[0;31m- #{source.blameLines[s].description}\033[0m\n"
       else
         # 用绿色打印插入的字符
-        diffresult += "\033[0;32m+ #{strb[yOffset]}\033[0m\n"
+        diffresult += "\033[0;32m+ #{target.blameLines[yOffset].description}\033[0m\n"
         yOffset += 1
       end
       # 打印相同的字符
       (0..e - m - 1).each do |i|
-        diffresult += "  #{stra[m + i]}\n"
+        # diffresult += "  #{source.blameLines[m + i]}\n"
         yOffset += 1
       end
     end
     puts diffresult
+    puts "\n"
   end
 end

@@ -14,7 +14,7 @@ class BlameFile
     attr_accessor :filename
     attr_accessor :blameLines
 
-    def initialize(filename, blamelines)
+    def initialize(filename, blameLines)
         @filename = filename
         @blameLines = blameLines
     end
@@ -26,6 +26,7 @@ class BlameLine
     attr_accessor :date
     attr_accessor :line
     attr_accessor :code
+    attr_accessor :description
 
     def initialize(hash, user, date, line, code)
         @hash = hash
@@ -33,6 +34,7 @@ class BlameLine
         @date = date
         @line = line
         @code = code
+        @description = code
     end
 
     # def uuid 

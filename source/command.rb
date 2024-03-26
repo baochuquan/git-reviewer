@@ -1,8 +1,15 @@
 #!/usr/bin/ruby 
 
 require_relative 'blame-tree'
-require_relative 'blame-analyzer'
+require_relative 'blame-builder'
+require_relative 'utils/analyzer'
 require_relative 'myers'
 
-analyzer = BlameAnalyzer.new("master", "feature/practiceReward")
-analyzer.analyzeSummary
+# analyzer = BlameBuilder.new("feature/changeEnLevel", "master")
+# analyzer.analyzeSummary
+
+analyzer = Analyzer.new("feature/changeEnLevel", "master")
+analyzer.summary
+
+# myers = Myers.new("ABCABBA", "CBABAC")
+# myers.myers("ABCABBA", "CBABAC")
