@@ -4,19 +4,25 @@ class BlameBranch
     attr_accessor :branch 
     attr_accessor :blameFiles
 
-    def initialize(filename, blameFiles)
-        @filename = filename
+    def initialize(branch, blameFiles)
+        @branch = branch
         @blameFiles = blameFiles
     end
 end
 
 class BlameFile
+    VALID = 0
+    BINARY = 1
+    NOTEXIST = 2
+
     attr_accessor :filename
     attr_accessor :blameLines
+    attr_accessor :property         # 属性，VALID/BINARY/NOTEXIST
 
-    def initialize(filename, blameLines)
+    def initialize(filename, blameLines, property)
         @filename = filename
         @blameLines = blameLines
+        @property = property
     end
 end
 

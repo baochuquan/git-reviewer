@@ -1,6 +1,6 @@
 require 'open3'
-require_relative '../blame-tree'
-require_relative '../blame-builder'
+require_relative '../blame/blame-tree'
+require_relative '../blame/blame-builder'
 require_relative 'printer'
 require_relative 'checker'
 

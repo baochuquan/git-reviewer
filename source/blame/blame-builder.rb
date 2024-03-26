@@ -1,7 +1,7 @@
 require 'open3'
 require_relative 'blame-tree'
-require_relative 'utils/printer'
-require_relative 'utils/checker'
+require_relative '../utils/printer'
+require_relative '../utils/checker'
 
 class BlameBuilder
     attr_accessor :sourceBranch       # source branch
@@ -39,7 +39,6 @@ class BlameBuilder
     def checkEnvironment
         # 检查当前是否是 Git 仓库
         if !Checker.isGitRepositoryExist? 
-            # TODO: 打印内容，退出程序
             raise "The command execution environment must be a git repository."
         end
 
@@ -56,17 +55,20 @@ class BlameBuilder
 
     def blameBranch(branch, files)
         blameFiles = []
-        files.each do |file|
-            if Checker.isFileExist?(branch, file) then
-                if Checker.isFileBinary?(branch, file) 
-                    # TODO: @baocq 二进制
-                    blameFiles.append(BlameFile.new(file, []))
+        files.each do |filename|
+            bf = BlameFile.new("", [], BlameFile::VALID)
+
+            if Checker.isFileExist?(branch, filename) then
+                if Checker.isFileBinary?(branch, filename) 
+                    bf = BlameFile.new(filename, [], BlameFile::BINARY)
                 else 
-                    blameFiles.append(blameFile(branch, file))
+                    bf = blameFile(branch, filename)
                 end
             else
-                blameFiles.append(BlameFile.new(file, []))
+                bf = BlameFile.new(filename, [], BlameFile::NOTEXIST)
             end
+            blameFiles.append(bf)
+            Printer.put "BlameFile -> #{bf.property} #{bf.filename}"
         end
         result = BlameBranch.new(branch, blameFiles)
         return result
@@ -80,8 +82,7 @@ class BlameBuilder
             blameLines.append(blameLine(line)) 
         end
 
-        Printer.put "blameFile -> #{filename}"
-        result = BlameFile.new(filename, blameLines)
+        result = BlameFile.new(filename, blameLines, BlameFile::VALID)
         return result
     end
 

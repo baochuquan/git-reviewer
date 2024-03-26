@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+require_relative '../blame/blame-tree'
 
 class Myers
   # Type: BlameFile
