@@ -32,18 +32,5 @@ class Analyzer
         end
 
         reviewer = {}
-       @builder.sourceBlame.blameFiles.each_with_index do |sfile, index|
-            tfile = @builder.targetBlame.blameFiles[index]
-            
-            # diff = Myers.new(sfile, tfile)
-            # diff.myers
-
-            # if tfile != nil && tfile.blameLines != nil && tfile.blameLines.count == 0 then
-            #     reviewer["new"] = 0 unless hash.key?("new")
-            #     reviewer["new"] += 1
-            # else
-            #     puts ""
-            # end
-        end
     end
 end

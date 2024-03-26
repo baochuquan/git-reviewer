@@ -1,4 +1,5 @@
 require_relative '../blame/blame-tree'
+require_relative '../blame/blame-diff'
 
 class Myers
   # Type: BlameFile
@@ -9,12 +10,12 @@ class Myers
     self.target = target
   end
 
-  def myers
+  def resolve
     # 字符串 a 和 b 的长度，分别为 n 和 m
-    print("source => #{source.filename}\n")
-    print("#{source.blameLines.count}\n")
-    print("target => #{target.filename}\n")
-    print("#{target.blameLines.count}\n")
+    # print("source => #{source.filename}\n")
+    # print("#{source.blameLines.count}\n")
+    # print("target => #{target.filename}\n")
+    # print("#{target.blameLines.count}\n")
     m = source.blameLines.count
     n = target.blameLines.count
 
@@ -56,10 +57,11 @@ class Myers
           if xEnd == m && yEnd == n
             vs[d] = tmp
             # 生成最短编辑路径
-            snakes = solution(vs, m, n, d)
+            snakes = route(vs, m, n, d)
             # 打印最短编辑路径
             printDiff(snakes)
-            return
+            result = buildDiff(snakes)
+            return result
           end
         end
         # 记录深度为 D 的所有 K 线的最佳位置
@@ -68,7 +70,7 @@ class Myers
     end
   end
 
-  def solution(vs, m, n, d)
+  def route(vs, m, n, d)
     snakes = []
     # 定义位置结构
     pos = { x: m, y: n }
@@ -136,7 +138,41 @@ class Myers
         yOffset += 1
       end
     end
+    puts "filename -> #{source.filename}"
     puts diffresult
     puts "\n"
+  end
+
+  def buildDiff(snakes)
+    diffresult = []
+    yOffset = 0
+
+    snakes.each_with_index do |snake, index|
+      s = snake[0]
+      m = snake[1]
+      e = snake[2]
+
+      # 如果是第一个差异，并且差异的开始点不是字符串头（即两字符串在开始部分有相同子字符串）
+      if index === 0 && s != 0
+        # 所有相同字符，直到s
+        (0..s - 1).each do |j|
+          yOffset += 1
+        end
+      end
+      if m - s == 1
+        # 用红色打印删除的字符
+        diffresult.append(BlameLineDiff.new(source.blameLines[s], BlameLineDiff::DELETE))
+      else
+        # 用绿色打印插入的字符
+        diffresult.append(BlameLineDiff.new(target.blameLines[yOffset], BlameLineDiff::ADD))
+        yOffset += 1
+      end
+      # 相同的字符
+      (0..e - m - 1).each do |i|
+        yOffset += 1
+      end
+    end
+
+    return BlameFileDiff.new(source.filename, diffresult, BlameFileDiff::MODIFY)
   end
 end

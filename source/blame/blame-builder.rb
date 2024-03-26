@@ -2,12 +2,15 @@ require 'open3'
 require_relative 'blame-tree'
 require_relative '../utils/printer'
 require_relative '../utils/checker'
+require_relative '../algorithm/myers'
 
 class BlameBuilder
-    attr_accessor :sourceBranch       # source branch
+    attr_accessor :sourceBranch         # source branch
     attr_accessor :targetBranch
-    attr_accessor :sourceBlame        # BlameBranch
-    attr_accessor :targetBlame        # BlameBranch
+    attr_accessor :sourceBlame          # BlameBranch
+    attr_accessor :targetBlame          # BlameBranch
+
+    attr_accessor :diffs                # Array<BlameFileDiff>
 
     def initialize(sourceBranch, targetBranch)
         @sourceBranch = sourceBranch
@@ -21,19 +24,30 @@ class BlameBuilder
         files = Checker.diffFiles(@sourceBranch, @targetBranch)
         if files == nil or files.count == 0
             raise "TODO"
+        else 
+            Printer.yellow "============ Diff files between source<#{@sourceBranch}> and target<#{@targetBranch}> ============"
+            Printer.put files
+            Printer.put "\n"
         end
 
-        Printer.yellow "============ Diff files between source<#{@sourceBranch}> and target<#{@targetBranch}> ============"
-        Printer.put files
-        Printer.put "\n"
-
+        # 构建 source branch 的 BlameBranch
         Printer.yellow "============ source BlameFiles ============"
         @sourceBlame = blameBranch(@sourceBranch, files)
         Printer.put "\n"
 
+        # 构建 target branch 的 BlameBranch
         Printer.yellow "============ target BlameFiles ============"
         @targetBlame = blameBranch(@targetBranch, files)
-        Printer.put "\n"
+        Printer.put "\n"            
+
+        # 构建 diffs
+        diffs = []
+        @sourceBlame.blameFiles.each_with_index do |sfile, index|
+            tfile = @targetBlame.blameFiles[index]
+            # Diff 时需要交换一下
+            myers = Myers.new(tfile, sfile)
+            diffs.append(myers.resolve)
+        end
     end
 
     def checkEnvironment
