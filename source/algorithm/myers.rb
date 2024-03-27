@@ -59,7 +59,6 @@ class Myers
             # 生成最短编辑路径
             snakes = route(vs, m, n, d)
             # 打印最短编辑路径
-            printDiff(snakes)
             result = buildDiff(snakes)
             return result
           end
@@ -107,42 +106,6 @@ class Myers
     snakes
   end
 
-  def printDiff(snakes)
-    diffresult = ''
-    yOffset = 0
-
-    snakes.each_with_index do |snake, index|
-      s = snake[0]
-      m = snake[1]
-      e = snake[2]
-
-      # 如果是第一个差异，并且差异的开始点不是字符串头（即两字符串在开始部分有相同子字符串）
-      if index === 0 && s != 0
-        # 打印所有相同字符，直到s
-        (0..s - 1).each do |j|
-          # diffresult += "  #{source.blameLines[j].description}\n"
-          yOffset += 1
-        end
-      end
-      if m - s == 1
-        # 用红色打印删除的字符
-        diffresult += "\033[0;31m- #{source.blameLines[s].description}\033[0m\n"
-      else
-        # 用绿色打印插入的字符
-        diffresult += "\033[0;32m+ #{target.blameLines[yOffset].description}\033[0m\n"
-        yOffset += 1
-      end
-      # 打印相同的字符
-      (0..e - m - 1).each do |i|
-        # diffresult += "  #{source.blameLines[m + i]}\n"
-        yOffset += 1
-      end
-    end
-    puts "filename -> #{source.filename}"
-    puts diffresult
-    puts "\n"
-  end
-
   def buildDiff(snakes)
     diffresult = []
     yOffset = 0
@@ -156,23 +119,54 @@ class Myers
       if index === 0 && s != 0
         # 所有相同字符，直到s
         (0..s - 1).each do |j|
+          diffline = BlameLineDiff.new(source.blameLines[s], target.blameLines[yOffset], BlameLineDiff::UNCHANGE)
+          diffresult.append(diffline)
           yOffset += 1
         end
       end
       if m - s == 1
         # 用红色打印删除的字符
-        diffresult.append(BlameLineDiff.new(source.blameLines[s], BlameLineDiff::DELETE))
+        diffline = BlameLineDiff.new(source.blameLines[s], nil, BlameLineDiff::DELETE)
+        diffresult.append(diffline)
       else
         # 用绿色打印插入的字符
-        diffresult.append(BlameLineDiff.new(target.blameLines[yOffset], BlameLineDiff::ADD))
+        diffline = BlameLineDiff.new(nil, target.blameLines[yOffset], BlameLineDiff::ADD)
+        diffresult.append(diffline)
         yOffset += 1
       end
       # 相同的字符
       (0..e - m - 1).each do |i|
+        diffline = BlameLineDiff.new(source.blameLines[s], target.blameLines[yOffset], BlameLineDiff::UNCHANGE)
+        diffresult.append(diffline)
         yOffset += 1
       end
     end
 
-    return BlameFileDiff.new(source.filename, diffresult, BlameFileDiff::MODIFY)
+    # 确定属性
+    operation = BlameFileDiff::UNKNOWN
+    binary = false 
+    if source.exist? && target.exist? 
+      operation = BlameFileDiff::MODIFY
+      binary = target.binary? 
+    elsif source.exist? && !target.exist?
+      operation = BlameFileDiff::DELETE
+      binary = source.binary? 
+    elsif !source.exist? && target.exist?
+      operation = BlameFileDiff::ADD 
+      binary = target.binary? 
+    else
+      operation = BlameFileDiff::UNKNOWN
+      binary = false
+    end
+
+    # 确定结果
+    result = BlameFileDiff.new(source.filename, diffresult, operation, binary)
+
+    # 打印内容
+    Printer.put "#{result.formatFilename}"
+    Printer.put "#{result.formatProperty}"
+    Printer.put "#{result.formatLineDiff}"
+
+    return result
   end
 end

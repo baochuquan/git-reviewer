@@ -41,12 +41,12 @@ class BlameBuilder
         Printer.put "\n"            
 
         # 构建 diffs
-        diffs = []
+        @diffs = []
         @sourceBlame.blameFiles.each_with_index do |sfile, index|
             tfile = @targetBlame.blameFiles[index]
-            # Diff 时需要交换一下
+            # Diff 时需要交换 tfile 和 sfile
             myers = Myers.new(tfile, sfile)
-            diffs.append(myers.resolve)
+            @diffs.append(myers.resolve)
         end
     end
 
@@ -70,19 +70,19 @@ class BlameBuilder
     def blameBranch(branch, files)
         blameFiles = []
         files.each do |filename|
-            bf = BlameFile.new("", [], BlameFile::VALID)
+            bf = BlameFile.new("", [], false, false)
 
             if Checker.isFileExist?(branch, filename) then
                 if Checker.isFileBinary?(branch, filename) 
-                    bf = BlameFile.new(filename, [], BlameFile::BINARY)
+                    bf = BlameFile.new(filename, [], true, true)
                 else 
                     bf = blameFile(branch, filename)
                 end
             else
-                bf = BlameFile.new(filename, [], BlameFile::NOTEXIST)
+                bf = BlameFile.new(filename, [], false, false)
             end
             blameFiles.append(bf)
-            Printer.put "BlameFile -> #{bf.property} #{bf.filename}"
+            Printer.put "BlameFile -> #{bf.filename}"
         end
         result = BlameBranch.new(branch, blameFiles)
         return result
@@ -96,7 +96,7 @@ class BlameBuilder
             blameLines.append(blameLine(line)) 
         end
 
-        result = BlameFile.new(filename, blameLines, BlameFile::VALID)
+        result = BlameFile.new(filename, blameLines, true, false)
         return result
     end
 

@@ -6,4 +6,5 @@ require_relative 'utils/analyzer'
 require_relative 'algorithm/myers'
 
 analyzer = Analyzer.new("feature/changeEnLevel", "master")
-analyzer.summary
+analyzer.setupReviewers
+analyzer.makeDecision
