@@ -1,0 +1,36 @@
+PATH
+  remote: .
+  specs:
+    git-reviewer (0.1.0)
+      claide (~> 1.0.3)
+
+GEM
+  remote: https://gems.ruby-china.com/
+  specs:
+    claide (1.0.3)
+    diff-lcs (1.5.1)
+    rake (13.1.0)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
+
+PLATFORMS
+  arm64-darwin-22
+
+DEPENDENCIES
+  git-reviewer!
+  rake (~> 13.0)
+  rspec (~> 3.0)
+
+BUNDLED WITH
+   2.3.9
