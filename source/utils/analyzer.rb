@@ -52,7 +52,8 @@ class Analyzer
         @builder.diffs.each do |fdiff|
             editor = nil 
             score = 0
-
+            
+            # 其他操作按行计算权重
             fdiff.diffLines.each_with_index do |ldiff, index|
                 if ldiff.operation == BlameLineDiff::DELETE
                     # 删除行
@@ -62,7 +63,7 @@ class Analyzer
                     # 新增行
                     if editor != nil 
                         # 紧随删除，积分
-                        scroe += 1
+                        score += 1
                     else 
                         # 非紧随删除
                         record(ldiff.tLine.user, 1)
@@ -85,6 +86,7 @@ class Analyzer
     end
 
     def makeDecision
+        Printer.put "\n"
         Printer.yellow "============ Reviewers ============"
         @reviewers.each do |key, value|
             Printer.put key 
@@ -95,7 +97,7 @@ class Analyzer
     def record(username, score)
         rv = @reviewers[username]
         if rv == nil 
-            @reviewers[username] = Reviewer.new(username, score, Reviewer::DEVELOPER)
+            @reviewers[username] = Reviewer.new(username, score)
             return 
         end
 

@@ -57,7 +57,8 @@ class BlameFileDiff
             elsif line.operation == BlameLineDiff::ADD 
                 result += "\033[0;32m#{line.tLine.formatUser} #{line.tLine.formatLine} + #{line.tLine.description}\033[0m\n"
             else
-                result += "#{line.tLine.formatUser} #{line.tLine.formatLine}   #{line.tLine.description}\n"
+                # TODO: @baocq
+                # result += "#{line.tLine.formatUser} #{line.tLine.formatLine}   #{line.tLine.description}\n"
             end
         end
         return result
