@@ -44,10 +44,13 @@ class Checker
 
     # 分析两个分支之间修改的文件
     def self.diffFiles(source, target)
-        cmd = "git diff --name-only #{source} #{target}"
+        cmd = "git merge-base #{source} #{target}"
+        merge_base = `#{cmd}`
+        merge_base = merge_base.chomp
+
+        cmd = "git diff --name-only #{merge_base} #{source}"
         result = `#{cmd}`
         result = result.lines.map { |line| line.chomp }
-        # Printer.put result
         return result
     end
 
