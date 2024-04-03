@@ -1,0 +1,33 @@
+---
+include:
+- "**/*.rb"
+exclude:
+- spec/**/*
+- test/**/*
+- vendor/**/*
+- ".bundle/**/*"
+require: []
+domains: []
+reporters:
+- rubocop
+- require_not_found
+formatter:
+  rubocop:
+    cops: safe
+    except: []
+    only: []
+    extra_args: []
+require_paths: []
+plugins: []
+max_files: 5000
+
+interpreter:
+  name: "ruby"
+  version: "2.6.3"
+
+require_paths:
+  - "lib"
+
+gems:
+  - "claide"
+  - "rspec"

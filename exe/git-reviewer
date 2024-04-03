@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative "../lib/gitreviewer"
+require_relative '../lib/gitreviewer'
 
+# GitReviewer::Command.run(ARGV)
 GitReviewer::Command.run(ARGV)
 # TaskLoop::Command.run(["init"])
 # TaskLoop::Command.run(["list"])
