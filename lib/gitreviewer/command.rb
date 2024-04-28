@@ -4,7 +4,9 @@ module GitReviewer
   require 'gitreviewer/blame/blame-builder'
   require 'gitreviewer/utils/analyzer'
   require 'gitreviewer/algorithm/myers'
-  require 'gitreviewer/option/init'
+  require 'gitreviewer/option/init_option'
+  require 'gitreviewer/utils/checker'
+  require 'gitreviewer/option/analyze_option'
 
   class Command < CLAide::Command
     self.abstract_command = false
@@ -24,7 +26,7 @@ module GitReviewer
         ['--analyze-reviewer', 'Only analyze the proportion of code reviewers.'],
         ['--verbose', 'Show more details when executing commands.'],
         ['--version', 'Show version of git-reviewer.']
-      ]
+    ].concat(super)
     end
 
     def initialize(argv)
@@ -38,15 +40,6 @@ module GitReviewer
       @help = argv.flag?('help', false)
       super
     end
-
-    # def validate!
-    #     super
-    #     # 处理 help 选项
-    #     if @help
-    #         help!
-    #         return
-    #     end
-    # end
 
     def run
       # 处理 help 选项
@@ -69,13 +62,49 @@ module GitReviewer
       end
 
       # 分析
+      analyze
+    end
+
+    def analyze
+      # 检查环境
+      if !Checker.isGitRepositoryExist?
+        Printer.red "Error: git repository not exist. Please execute the command in the root director of a git repository."
+        exit 1
+      end
+      # 检查参数
       if !@analyze_author && !@analyze_reviewer
         # 如果两个选项均没有，则默认分析作者和审查者
         @analyze_author = true
         @analyze_reviewer = true
-
-        puts "analyze"
       end
+      # 设置默认分支
+      if @source == nil
+        # 默认 source 为当前分支
+        @source = Checker.currentGitBranch
+      end
+      if @target == nil
+        Printer.red "Error: target branch cannot be nil or empty. Please use `--target=<branch>` to specify the target branch."
+        exit 1
+      end
+
+      # 检查分支
+      if @source != nil && @target != nil
+        # source 分支
+        if !Checker.isGitBranchExist?(@source)
+          Printer.red "Error: source branch `#{@source}` not exist."
+          exit 1
+        end
+        # target 分支
+        if !Checker.isGitBranchExist?(@target)
+          Printer.red "Error: target branch `#{@target}` not exist."
+          exit 1
+        end
+      end
+
+
+      # 执行分析
+      analyzeOption = AnalyzeOption.new(@source, @target, @analyze_author, @analyze_reviewer, @verbose)
+      analyzeOption.execute
     end
   end
 end

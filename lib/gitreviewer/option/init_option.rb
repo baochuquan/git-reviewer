@@ -1,6 +1,6 @@
 module GitReviewer
 
-  require_relative '../config/gitreviewer'
+  require_relative '../config/configuration'
 
   class InitOption
 
@@ -48,6 +48,5 @@ module GitReviewer
         file.write(formatted_json)
       end
     end
-
   end
 end
