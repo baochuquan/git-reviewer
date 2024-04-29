@@ -1,5 +1,6 @@
+require_relative '../utils/analyzer'
+
 module GitReviewer
-  require_relative '../utils/analyzer'
 
   class AnalyzeOption
     attr_accessor :source

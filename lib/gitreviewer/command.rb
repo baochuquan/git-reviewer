@@ -1,12 +1,13 @@
+require 'claide'
+require_relative './blame/blame_tree'
+require_relative './blame/blame_builder'
+require_relative './utils/analyzer'
+require_relative './algorithm/myers'
+require_relative './option/init_option'
+require_relative './utils/checker'
+require_relative './option/analyze_option'
+
 module GitReviewer
-  require 'claide'
-  require 'gitreviewer/blame/blame-tree'
-  require 'gitreviewer/blame/blame-builder'
-  require 'gitreviewer/utils/analyzer'
-  require 'gitreviewer/algorithm/myers'
-  require 'gitreviewer/option/init_option'
-  require 'gitreviewer/utils/checker'
-  require 'gitreviewer/option/analyze_option'
 
   class Command < CLAide::Command
     self.abstract_command = false

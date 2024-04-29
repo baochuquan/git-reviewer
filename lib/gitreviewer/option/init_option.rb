@@ -1,9 +1,8 @@
+require_relative '../config/configuration'
+
 module GitReviewer
 
-  require_relative '../config/configuration'
-
   class InitOption
-
     attr_accessor :fileExist
     attr_accessor :fileValid
 

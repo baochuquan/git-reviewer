@@ -2,13 +2,4 @@
 
 require_relative '../lib/gitreviewer'
 
-# GitReviewer::Command.run(ARGV)
 GitReviewer::Command.run(ARGV)
-# TaskLoop::Command.run(["init"])
-# TaskLoop::Command.run(["list"])
-# TaskLoop::Command.run(["log", "--task-name=chuquan"])
-# TaskLoop::Command.run(["log", "--cron"])
-# TaskLoop::Command.run(["launch"])
-# TaskLoop::Command.run(["env", "--remove=NOX_TEMPALTES,NOX_HOME"])
-# TaskLoop::Command.run(["env", "--global-list"])
-# TaskLoop::Command.run(["env", "--import=PATH,RUBY_VERSION,GEM_PATH,GEM_HOME,IRBRC,NOX_ROOT,NOX_HOME,NOX_COMMON,NOX_SCRIPTS,NOX_CONFIG,NOX_TEMPALTES"])

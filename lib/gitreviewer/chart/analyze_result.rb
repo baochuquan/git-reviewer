@@ -1,5 +1,6 @@
+require 'set'
+
 module GitReviewer
-  require 'set'
   class AnalyzeResult
     attr_accessor :name
     attr_accessor :file_count

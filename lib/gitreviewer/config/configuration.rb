@@ -16,13 +16,13 @@ module GitReviewer
     end
 
     def to_hash
-        {
-            project_owner: @project_owner,
-            folder_owner: @folder_owner.map(&:to_hash),
-            file_owner: @file_owner.map(&:to_hash),
-            ignore_reviewer_files: @ignore_reviewer_files,
-            ignore_reviewer_folders: @ignore_reviewer_folders
-        }
+      {
+        project_owner: @project_owner,
+        folder_owner: @folder_owner.map(&:to_hash),
+        file_owner: @file_owner.map(&:to_hash),
+        ignore_reviewer_files: @ignore_reviewer_files,
+        ignore_reviewer_folders: @ignore_reviewer_folders
+      }
     end
 
     def reviewer_of_file(file_name)
