@@ -1,23 +1,22 @@
+require_relative '../config/configuration'
+
 module GitReviewer
 
-  require_relative '../config/gitreviewer'
-
   class InitOption
-
     attr_accessor :fileExist
     attr_accessor :fileValid
 
     def execute
       # 判断当前 .gitreviewer 文件是否存在
-      checkFileExist
+      check_file_exist
 
       # 如果不存在，则创建 .gitreviewer.json
       if !@fileExist
-        createFile("baocq")   # TODO: @baocq
+        create_file("baocq")   # TODO: @baocq
       end
     end
 
-    def checkFileExist
+    def check_file_exist
       file_name = ".gitreviewer.json"
       @fileExist = File.exist?(file_name)
       if @fileExist
@@ -26,7 +25,7 @@ module GitReviewer
       end
     end
 
-    def checkFileContent
+    def check_file_content
       file_name = ".gitreviewer.json"
       file_content = File.read(file_name)
       data = JSON.parse(file_content)
@@ -37,7 +36,7 @@ module GitReviewer
     end
 
 
-    def createFile(project_owner)
+    def create_file(project_owner)
       config = Configuration.new(project_owner, [], [], [], [])
       json = config.to_hash.to_json
       data = JSON.parse(json)
@@ -48,6 +47,5 @@ module GitReviewer
         file.write(formatted_json)
       end
     end
-
   end
 end
