@@ -1,4 +1,5 @@
 require_relative '../utils/analyzer'
+require 'terminal-table'
 
 module GitReviewer
 
@@ -40,11 +41,20 @@ module GitReviewer
       results = results.sort_by { |item| item.line_count }.reverse
       total_file = results.sum { |item| item.file_count }
       total_line = results.sum { |item| item.line_count }
+      output_rows = []
       results.each do |item|
-        file_ratio = item.file_count.to_f / total_file.to_f
-        line_ratio = item.line_count.to_f / total_line.to_f
-        puts "author => #{item.name}; file_count => #{item.file_count}; file_ratio => #{file_ratio.round(2)}; line_count => #{item.line_count}; line_ratio => #{line_ratio.round(2)}"
+        file_ratio = item.file_count.to_f / total_file.to_f * 100
+        line_ratio = item.line_count.to_f / total_line.to_f * 100
+        output_rows << [item.name, item.file_count, "#{file_ratio.round(2)}%", item.line_count, "#{line_ratio.round(2)}%"]
       end
+
+      table = Terminal::Table.new do |t|
+        t.title = "The authors involved in the code changes"
+        t.headings = ["Related Author", "File Count", "File Ratio", "Line Count", "Line Ratio"]
+        t.rows = output_rows
+      end
+      puts table
+      puts "\n"
     end
 
     def show_analyze_reviewer
@@ -55,11 +65,21 @@ module GitReviewer
       results = results.sort_by { |item| item.line_count }.reverse
       total_file = results.sum { |item| item.file_count }
       total_line = results.sum { |item| item.line_count }
+      output_rows = []
       results.each do |item|
-        file_ratio = item.file_count.to_f / total_file.to_f
-        line_ratio = item.line_count.to_f / total_line.to_f
-        puts "reviewer=> #{item.name}; file_count => #{item.file_count}; file_ratio => #{file_ratio.round(2)}; line_count => #{item.line_count}; line_ratio => #{line_ratio.round(2)}"
+        file_ratio = item.file_count.to_f / total_file.to_f * 100
+        line_ratio = item.line_count.to_f / total_line.to_f * 100
+        output_rows << [item.name, item.file_count, "#{file_ratio.round(2)}%", item.line_count, "#{line_ratio.round(2)}%"]
       end
+
+      table = Terminal::Table.new do |t|
+        t.title = "Suggested code reviewers and their proportions"
+        t.headings = ["Suggested Reviewer", "File Count", "File Ratio", "Line Count", "Line Ratio"]
+        t.rows = output_rows
+      end
+
+      puts table
+      puts "\n"
     end
   end
 end
