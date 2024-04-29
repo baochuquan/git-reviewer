@@ -25,7 +25,7 @@ module GitReviewer
       @binary = binary
     end
 
-    def formatProperty
+    def format_property
       result = ""
       case @operation
       when BlameFileDiff::UNKNOWN
@@ -47,20 +47,20 @@ module GitReviewer
       return result
     end
 
-    def formatFilename
+    def format_file_name
        return "filename<#{filename}>"
     end
 
-    def formatLineDiff
+    def format_line_diff
       result = ""
       diffLines.each do |line|
         if line.operation == BlameLineDiff::DELETE
-          result += "\033[0;31m#{line.sLine.formatUser} #{line.sLine.formatLine} - #{line.sLine.description}\033[0m\n"
+          result += "\033[0;31m#{line.sLine.format_user} #{line.sLine.format_line} - #{line.sLine.description}\033[0m\n"
         elsif line.operation == BlameLineDiff::ADD
-          result += "\033[0;32m#{line.tLine.formatUser} #{line.tLine.formatLine} + #{line.tLine.description}\033[0m\n"
+          result += "\033[0;32m#{line.tLine.format_user} #{line.tLine.format_line} + #{line.tLine.description}\033[0m\n"
         else
           # TODO: @baocq
-          # result += "#{line.tLine.formatUser} #{line.tLine.formatLine}   #{line.tLine.description}\n"
+          # result += "#{line.tLine.format_user} #{line.tLine.format_line}   #{line.tLine.description}\n"
         end
       end
       return result
@@ -86,11 +86,11 @@ module GitReviewer
       @operation = operation
     end
 
-    def sLineNo
+    def s_line_number
       sLine.line
     end
 
-    def tLineNo
+    def t_line_number
       tLine.line
     end
   end

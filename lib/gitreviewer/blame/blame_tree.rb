@@ -64,11 +64,11 @@ module GitReviewer
       other.is_a?(BlameLine) && other.code == @code
     end
 
-    def formatLine
+    def format_line
       format('%5d', line)
     end
 
-    def formatUser
+    def format_user
       user.rjust(16)
     end
   end

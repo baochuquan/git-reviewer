@@ -164,9 +164,9 @@ module GitReviewer
       result = BlameFileDiff.new(source.filename, diffresult, operation, binary)
 
       # 打印内容
-      Printer.put "#{result.formatFilename}"
-      Printer.put "#{result.formatProperty}"
-      Printer.put "#{result.formatLineDiff}"
+      Printer.put "#{result.format_file_name}"
+      Printer.put "#{result.format_property}"
+      Printer.put "#{result.format_line_diff}"
 
       return result
     end

@@ -68,7 +68,7 @@ module GitReviewer
 
     def analyze
       # 检查环境
-      if !Checker.isGitRepositoryExist?
+      if !Checker.is_git_repository_exist?
         Printer.red "Error: git repository not exist. Please execute the command in the root director of a git repository."
         exit 1
       end
@@ -81,7 +81,7 @@ module GitReviewer
       # 设置默认分支
       if @source == nil
         # 默认 source 为当前分支
-        @source = Checker.currentGitBranch
+        @source = Checker.current_git_branch
       end
       if @target == nil
         Printer.red "Error: target branch cannot be nil or empty. Please use `--target=<branch>` to specify the target branch."
@@ -91,12 +91,12 @@ module GitReviewer
       # 检查分支
       if @source != nil && @target != nil
         # source 分支
-        if !Checker.isGitBranchExist?(@source)
+        if !Checker.is_git_branch_exist?(@source)
           Printer.red "Error: source branch `#{@source}` not exist."
           exit 1
         end
         # target 分支
-        if !Checker.isGitBranchExist?(@target)
+        if !Checker.is_git_branch_exist?(@target)
           Printer.red "Error: target branch `#{@target}` not exist."
           exit 1
         end

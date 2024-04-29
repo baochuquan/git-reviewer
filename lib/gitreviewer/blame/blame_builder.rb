@@ -20,9 +20,9 @@ module GitReviewer
 
     def build
       # 检查环境
-      checkEnvironment
+      check_environment
       # 遍历分支改动的每个文件，得到 BlameFile 数组
-      files = Checker.diffFiles(@sourceBranch, @targetBranch)
+      files = Checker.diff_files(@sourceBranch, @targetBranch)
       if files == nil or files.count == 0
         raise "TODO"
       else
@@ -33,12 +33,12 @@ module GitReviewer
 
       # 构建 source branch 的 BlameBranch
       Printer.yellow "============ source BlameFiles ============"
-      @sourceBlame = blameBranch(@sourceBranch, files)
+      @sourceBlame = blame_branch(@sourceBranch, files)
       Printer.put "\n"
 
       # 构建 target branch 的 BlameBranch
       Printer.yellow "============ target BlameFiles ============"
-      @targetBlame = blameBranch(@targetBranch, files)
+      @targetBlame = blame_branch(@targetBranch, files)
       Printer.put "\n"
 
       # 构建 diffs
@@ -51,33 +51,33 @@ module GitReviewer
       end
     end
 
-    def checkEnvironment
+    def check_environment
       # 检查当前是否是 Git 仓库
-      if !Checker.isGitRepositoryExist?
+      if !Checker.is_git_repository_exist?
         raise "The command execution environment must be a git repository."
       end
 
       # 检查原始分支是否存在
-      if !Checker.isGitBranchExist?(@sourceBranch)
+      if !Checker.is_git_branch_exist?(@sourceBranch)
         raise "The source branch does not exist in the current git repository."
       end
 
       # 检查目标分支是否存在
-      if !Checker.isGitBranchExist?(@targetBranch)
+      if !Checker.is_git_branch_exist?(@targetBranch)
         raise "The target branch does not exist in the current git repository."
       end
     end
 
-    def blameBranch(branch, files)
+    def blame_branch(branch, files)
       blameFiles = []
       files.each do |filename|
         bf = BlameFile.new("", [], false, false)
 
-        if Checker.isFileExist?(branch, filename) then
-          if Checker.isFileBinary?(branch, filename)
+        if Checker.is_file_exist?(branch, filename) then
+          if Checker.is_file_binary?(branch, filename)
             bf = BlameFile.new(filename, [], true, true)
           else
-            bf = blameFile(branch, filename)
+            bf = blame_file(branch, filename)
           end
         else
           bf = BlameFile.new(filename, [], false, false)
@@ -89,19 +89,19 @@ module GitReviewer
       return result
     end
 
-    def blameFile(branch, filename)
+    def blame_file(branch, filename)
       blameLines = []
-      content = Checker.snapshotOfBlameFile(branch, filename)
+      content = Checker.snapshot_of_blame_file(branch, filename)
       # 遍历文件的每一行，得到 BlameLine 数组
       content.lines do |line|
-        blameLines.append(blameLine(line))
+        blameLines.append(blame_line(line))
       end
 
       result = BlameFile.new(filename, blameLines, true, false)
       return result
     end
 
-    def blameLine(text)
+    def blame_line(text)
       # 获取哈希值
       hash = text.slice!(0, 40)
       rest = text.strip
