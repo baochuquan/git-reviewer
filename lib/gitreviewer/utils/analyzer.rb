@@ -68,10 +68,10 @@ module GitReviewer
       analyze_author
       analyze_reviewer
 
-      print_author_result
-      print "\n"
-      print_reviewer_result
-      print "\n"
+    #   print_author_result
+    #   print "\n"
+    #   print_reviewer_result
+    #   print "\n"
     end
 
     def analyze_author

@@ -7,8 +7,6 @@ module GitReviewer
     attr_accessor :line_count
 
     attr_accessor :file_names
-    attr_accessor :file_ratio
-    attr_accessor :line_ratio
 
     def initialize(name)
       @name = name
@@ -28,14 +26,6 @@ module GitReviewer
 
     def add_line_count(count)
       @line_count += count
-    end
-
-    def set_file_ratio(value)
-      @file_ratio = value
-    end
-
-    def set_line_ratio(value)
-      @line_ratio = value
     end
   end
 end
