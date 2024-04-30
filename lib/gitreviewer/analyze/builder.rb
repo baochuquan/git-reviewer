@@ -5,49 +5,49 @@ require_relative '../utils/checker'
 require_relative '../algorithm/myers'
 
 module GitReviewer
-  class BlameBuilder
-    attr_accessor :sourceBranch         # source branch
-    attr_accessor :targetBranch
-    attr_accessor :sourceBlame          # BlameBranch
-    attr_accessor :targetBlame          # BlameBranch
+  class Builder
+    attr_accessor :source_branch         # source branch
+    attr_accessor :target_branch
+    attr_accessor :source_blame          # BlameBranch
+    attr_accessor :target_blame          # BlameBranch
 
-    attr_accessor :diffs                # Array<BlameFileDiff>
+    attr_accessor :diff_files                # Array<DiffFiles>
 
-    def initialize(sourceBranch, targetBranch)
-      @sourceBranch = sourceBranch
-      @targetBranch = targetBranch
+    def initialize(source_branch, target_branch)
+      @source_branch = source_branch
+      @target_branch = target_branch
     end
 
     def build
       # 检查环境
       check_environment
       # 遍历分支改动的每个文件，得到 BlameFile 数组
-      files = Checker.diff_files(@sourceBranch, @targetBranch)
+      files = Checker.diff_files(@source_branch, @target_branch)
       if files == nil or files.count == 0
-        raise "TODO"
+        Printer.red ""
       else
-        Printer.yellow "============ Diff files between source<#{@sourceBranch}> and target<#{@targetBranch}> ============"
+        Printer.yellow "============ Diff files between source<#{@source_branch}> and target<#{@target_branch}> ============"
         Printer.put files
         Printer.put "\n"
       end
 
       # 构建 source branch 的 BlameBranch
       Printer.yellow "============ source BlameFiles ============"
-      @sourceBlame = blame_branch(@sourceBranch, files)
+      @source_blame = blame_branch(@source_branch, files)
       Printer.put "\n"
 
       # 构建 target branch 的 BlameBranch
       Printer.yellow "============ target BlameFiles ============"
-      @targetBlame = blame_branch(@targetBranch, files)
+      @target_blame = blame_branch(@target_branch, files)
       Printer.put "\n"
 
-      # 构建 diffs
-      @diffs = []
-      @sourceBlame.blameFiles.each_with_index do |sfile, index|
-        tfile = @targetBlame.blameFiles[index]
+      # 构建 diff_files
+      @diff_files = []
+      @source_blame.blame_files.each_with_index do |sfile, index|
+        tfile = @target_blame.blame_files[index]
         # Diff 时需要交换 tfile 和 sfile
         myers = Myers.new(tfile, sfile)
-         @diffs.append(myers.resolve)
+         @diff_files.append(myers.resolve)
       end
     end
 
@@ -58,46 +58,46 @@ module GitReviewer
       end
 
       # 检查原始分支是否存在
-      if !Checker.is_git_branch_exist?(@sourceBranch)
+      if !Checker.is_git_branch_exist?(@source_branch)
         raise "The source branch does not exist in the current git repository."
       end
 
       # 检查目标分支是否存在
-      if !Checker.is_git_branch_exist?(@targetBranch)
+      if !Checker.is_git_branch_exist?(@target_branch)
         raise "The target branch does not exist in the current git repository."
       end
     end
 
     def blame_branch(branch, files)
-      blameFiles = []
-      files.each do |filename|
+      blame_files = []
+      files.each do |file_name|
         bf = BlameFile.new("", [], false, false)
 
-        if Checker.is_file_exist?(branch, filename) then
-          if Checker.is_file_binary?(branch, filename)
-            bf = BlameFile.new(filename, [], true, true)
+        if Checker.is_file_exist?(branch, file_name) then
+          if Checker.is_file_binary?(branch, file_name)
+            bf = BlameFile.new(file_name, [], true, true)
           else
-            bf = blame_file(branch, filename)
+            bf = blame_file(branch, file_name)
           end
         else
-          bf = BlameFile.new(filename, [], false, false)
+          bf = BlameFile.new(file_name, [], false, false)
         end
-        blameFiles.append(bf)
-        Printer.put "BlameFile -> #{bf.filename}"
+        blame_files.append(bf)
+        Printer.put "BlameFile -> #{bf.file_name}"
       end
-      result = BlameBranch.new(branch, blameFiles)
+      result = BlameBranch.new(branch, blame_files)
       return result
     end
 
-    def blame_file(branch, filename)
-      blameLines = []
-      content = Checker.snapshot_of_blame_file(branch, filename)
+    def blame_file(branch, file_name)
+      blame_lines = []
+      content = Checker.snapshot_of_blame_file(branch, file_name)
       # 遍历文件的每一行，得到 BlameLine 数组
       content.lines do |line|
-        blameLines.append(blame_line(line))
+        blame_lines.append(blame_line(line))
       end
 
-      result = BlameFile.new(filename, blameLines, true, false)
+      result = BlameFile.new(file_name, blame_lines, true, false)
       return result
     end
 

@@ -1,19 +1,21 @@
 require 'digest'
 
 module GitReviewer
+  # BlameBranch
   class BlameBranch
     attr_accessor :branch
-    attr_accessor :blameFiles
+    attr_accessor :blame_files
 
-    def initialize(branch, blameFiles)
+    def initialize(branch, blame_files)
       @branch = branch
-      @blameFiles = blameFiles
+      @blame_files = blame_files
     end
   end
 
+  # BlameFile
   class BlameFile
-    attr_accessor :filename
-    attr_accessor :blameLines
+    attr_accessor :file_name
+    attr_accessor :blame_lines
 
     attr_writer :exist
     attr_writer :binary
@@ -28,9 +30,9 @@ module GitReviewer
       @binary
     end
 
-    def initialize(filename, blameLines, exist, binary)
-      @filename = filename
-      @blameLines = blameLines
+    def initialize(file_name, blame_lines, exist, binary)
+      @file_name = file_name
+      @blame_lines = blame_lines
       @exist = exist
       @binary = binary
     end
@@ -52,12 +54,6 @@ module GitReviewer
       @code = code
       @description = code
     end
-
-    # def uuid
-    #     # 不包含行号
-    #     string = hash + user + date + code
-    #     return Digest::MD5.hexdigest(string)
-    # end
 
     # 用于 Myers 中进行判等操作
     def ==(other)

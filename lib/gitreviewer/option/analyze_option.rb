@@ -1,4 +1,4 @@
-require_relative '../utils/analyzer'
+require_relative '../analyze/analyzer'
 require 'terminal-table'
 
 module GitReviewer
