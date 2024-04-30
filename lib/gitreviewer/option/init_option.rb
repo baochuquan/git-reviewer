@@ -21,20 +21,9 @@ module GitReviewer
       @fileExist = File.exist?(file_name)
       if @fileExist
         puts "`.gitreviewer.json` exist. Please do not init again."
-        # puts "`.gitreviewer.json` not exist. Please execute `git reviewer init` to generate a configuration file."
+        exit 1
       end
     end
-
-    def check_file_content
-      file_name = ".gitreviewer.json"
-      file_content = File.read(file_name)
-      data = JSON.parse(file_content)
-      @fileValid = true
-    rescue JSON::ParseError => e
-      puts "An error occurred while analyzing `.gitreviewer.json`. Please check the content of `.gitreviewer.json`. Error: #{e}"
-      @fileValid = false
-    end
-
 
     def create_file(project_owner)
       config = Configuration.new(project_owner, [], [], [], [])
