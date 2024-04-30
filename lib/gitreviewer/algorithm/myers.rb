@@ -1,5 +1,5 @@
-require_relative '../blame/blame_tree'
-require_relative '../blame/blame_diff'
+require_relative '../analyze/blame_tree'
+require_relative '../analyze/diff_tree'
 
 module GitReviewer
   class Myers
@@ -13,12 +13,8 @@ module GitReviewer
 
     def resolve
       # 字符串 a 和 b 的长度，分别为 n 和 m
-      # print("source => #{source.filename}\n")
-      # print("#{source.blameLines.count}\n")
-      # print("target => #{target.filename}\n")
-      # print("#{target.blameLines.count}\n")
-      m = source.blameLines.count
-      n = target.blameLines.count
+      m = source.blame_lines.count
+      n = target.blame_lines.count
 
       # 用于存储每条 K 线上最佳位置的 Map
       v = { 1 => 0 }
@@ -32,35 +28,35 @@ module GitReviewer
           # 内层循环，宽度优先搜索，遍历 K 线
           (-d..d).step(2) do |k|
             down = ((k == -d) || ((k != d) && v[k + 1] > v[k - 1]))
-            kPrev = down ? k + 1 : k - 1
+            k_prev = down ? k + 1 : k - 1
             # 获取移动的起点位置
-            xStart = v[kPrev]
-            yStart = xStart - kPrev
+            x_start = v[k_prev]
+            y_start = x_start - k_prev
             # 获取移动一步的中间位置，向右或向下
-            xMid = down ? xStart : xStart + 1
-            yMid = xMid - k
+            x_mid = down ? x_start : x_start + 1
+            y_mid = x_mid - k
             # 获取移动的终点位置，后续可能会向右下移动。
-            xEnd = xMid
-            yEnd = yMid
+            x_end = x_mid
+            y_end = y_mid
 
             # 向右下移动，深度始终不变
-            while xEnd < m && yEnd < n && source.blameLines[xEnd] == target.blameLines[yEnd]
-              xEnd += 1
-              yEnd += 1
+            while x_end < m && y_end < n && source.blame_lines[x_end] == target.blame_lines[y_end]
+              x_end += 1
+              y_end += 1
             end
 
             # 记录对应 K 线所能达到的最佳位置
-            v[k] = xEnd
+            v[k] = x_end
 
-            tmp[k] = xEnd
+            tmp[k] = x_end
 
             # 如果两个字符串均到达末端，表示找到了终点，可以结束查找
-            if xEnd == m && yEnd == n
+            if x_end == m && y_end == n
               vs[d] = tmp
               # 生成最短编辑路径
               snakes = route(vs, m, n, d)
               # 打印最短编辑路径
-              result = buildDiff(snakes)
+              result = build_diff(snakes)
               return result
             end
           end
@@ -78,38 +74,38 @@ module GitReviewer
       # 回溯最短编辑路径
       while d > 0
         v = vs[d]
-        vPrev = vs[d - 1]
+        v_prev = vs[d - 1]
 
         k = pos[:x] - pos[:y]
         # 判断之前位置到当前位置最开始移动的方式，向下或向右
-        down = ((k == -d) || ((k != d) && (vPrev[k + 1] > vPrev[k - 1])))
-        kPrev = down ? k + 1 : k - 1
+        down = ((k == -d) || ((k != d) && (v_prev[k + 1] > v_prev[k - 1])))
+        k_prev = down ? k + 1 : k - 1
 
         # 当前位置
-        xEnd = v[k]
-        yEnd = xEnd - k
+        x_end = v[k]
+        y_end = x_end - k
 
         # 之前位置
-        xStart = vPrev[kPrev]
-        yStart = xStart - kPrev
+        x_start = v_prev[k_prev]
+        y_start = x_start - k_prev
 
         # 中间走斜线时的起始位置
-        xMid = down ? xStart : xStart + 1
-        yMid = xMid - k
+        x_mid = down ? x_start : x_start + 1
+        y_mid = x_mid - k
 
-        snakes.unshift([xStart, xMid, xEnd])
+        snakes.unshift([x_start, x_mid, x_end])
 
-        pos[:x] = xStart
-        pos[:y] = yStart
+        pos[:x] = x_start
+        pos[:y] = y_start
 
         d -= 1
       end
       snakes
     end
 
-    def buildDiff(snakes)
-      diffresult = []
-      yOffset = 0
+    def build_diff(snakes)
+      diff_result = []
+      y_offset = 0
 
       snakes.each_with_index do |snake, index|
         s = snake[0]
@@ -120,53 +116,52 @@ module GitReviewer
         if index === 0 && s != 0
           # 所有相同字符，直到s
           (0..s - 1).each do |j|
-            diffline = BlameLineDiff.new(source.blameLines[s], target.blameLines[yOffset], BlameLineDiff::UNCHANGE)
-            diffresult.append(diffline)
-            yOffset += 1
+            diff_line = DiffLine.new(source.blame_lines[s], target.blame_lines[y_offset], DiffLine::UNCHANGE)
+            diff_result.append(diff_line)
+            y_offset += 1
           end
         end
         if m - s == 1
           # 用红色打印删除的字符
-          diffline = BlameLineDiff.new(source.blameLines[s], nil, BlameLineDiff::DELETE)
-          diffresult.append(diffline)
+          diff_line = DiffLine.new(source.blame_lines[s], nil, DiffLine::DELETE)
+          diff_result.append(diff_line)
         else
           # 用绿色打印插入的字符
-          diffline = BlameLineDiff.new(nil, target.blameLines[yOffset], BlameLineDiff::ADD)
-          diffresult.append(diffline)
-          yOffset += 1
+          diff_line = DiffLine.new(nil, target.blame_lines[y_offset], DiffLine::ADD)
+          diff_result.append(diff_line)
+          y_offset += 1
         end
         # 相同的字符
         (0..e - m - 1).each do |i|
-          diffline = BlameLineDiff.new(source.blameLines[s], target.blameLines[yOffset], BlameLineDiff::UNCHANGE)
-          diffresult.append(diffline)
-          yOffset += 1
+          diff_line = DiffLine.new(source.blame_lines[s], target.blame_lines[y_offset], DiffLine::UNCHANGE)
+          diff_result.append(diff_line)
+          y_offset += 1
         end
       end
 
       # 确定属性
-      operation = BlameFileDiff::UNKNOWN
+      operation = DiffFile::UNKNOWN
       binary = false
       if source.exist? && target.exist?
-        operation = BlameFileDiff::MODIFY
+        operation = DiffFile::MODIFY
         binary = target.binary?
       elsif source.exist? && !target.exist?
-        operation = BlameFileDiff::DELETE
+        operation = DiffFile::DELETE
         binary = source.binary?
       elsif !source.exist? && target.exist?
-        operation = BlameFileDiff::ADD
+        operation = DiffFile::ADD
         binary = target.binary?
       else
-        operation = BlameFileDiff::UNKNOWN
+        operation = DiffFile::UNKNOWN
         binary = false
       end
 
       # 确定结果
-      result = BlameFileDiff.new(source.filename, diffresult, operation, binary)
+      result = DiffFile.new(source.file_name, diff_result, operation, binary)
 
-      # 打印内容
-      Printer.put "#{result.format_file_name}"
-      Printer.put "#{result.format_property}"
-      Printer.put "#{result.format_line_diff}"
+      # # 打印内容
+      result.print_meta_info
+      Printer.verbose_put "#{result.format_line_diff}"
 
       return result
     end

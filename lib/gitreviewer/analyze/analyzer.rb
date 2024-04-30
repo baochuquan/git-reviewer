@@ -1,10 +1,10 @@
 require 'open3'
-require_relative '../blame/blame_tree'
-require_relative '../blame/blame_builder'
-require_relative 'printer'
-require_relative 'checker'
+require_relative 'blame_tree'
+require_relative 'builder'
+require_relative '../utils/printer'
+require_relative '../utils/checker'
 require_relative '../config/configuration'
-require_relative '../chart/analyze_result'
+require_relative 'result_item'
 
 module GitReviewer
 
@@ -28,23 +28,27 @@ module GitReviewer
 
     def setup_builder
       # 构建 BlameTree
-      @builder = BlameBuilder.new(@source_branch, @target_branch)
+      @builder = Builder.new(@source_branch, @target_branch)
       @builder.build
 
-      if @builder.sourceBlame.blameFiles.count == 0
-        raise "blameFiles of sourceBlameBranch is zero"
+      if @builder.source_blame.blame_files.count == 0
+        Printer.warning "Warning: no blame file for source blame branch<#{@source_branch}>"
+        exit 1
       end
 
-      if @builder.targetBlame.blameFiles.count == 0
-        raise "blameFiles of targetBlameBranch is zero"
+      if @builder.target_blame.blame_files.count == 0
+        Printer.warning "Warning: no blame file for target blame branch<#{@target_branch}>"
+        exit 1
       end
 
-      if @builder.sourceBlame.blameFiles.count != @builder.targetBlame.blameFiles.count
-        raise "xxxx"
+      if @builder.source_blame.blame_files.count != @builder.target_blame.blame_files.count
+        Printer.red "Error: internal error. The number of files is not equal."
+        exit 1
       end
 
-      if @builder.diffs == nil
-        raise "diffs of builder is nil"
+      if @builder.diff_files == nil
+        Printer.red "Error: internal error. The diff files of builder is nil."
+        exit 1
       end
     end
 
@@ -67,40 +71,35 @@ module GitReviewer
       setup_configuration
       analyze_author
       analyze_reviewer
-
-    #   print_author_result
-    #   print "\n"
-    #   print_reviewer_result
-    #   print "\n"
     end
 
     def analyze_author
-      @builder.diffs.each do |fdiff|
-        fdiff.diffLines.each_with_index do |ldiff, index|
+      @builder.diff_files.each do |fdiff|
+        fdiff.diff_lines.each_with_index do |ldiff, index|
         record_author(fdiff, ldiff)
         end
       end
     end
 
     def analyze_reviewer
-      @builder.diffs.each do |fdiff|
+      @builder.diff_files.each do |fdiff|
         reviewer = nil
         lines = 0
 
         # 其他操作按行计算权重
-        fdiff.diffLines.each_with_index do |ldiff, index|
-          if ldiff.operation == BlameLineDiff::DELETE
+        fdiff.diff_lines.each_with_index do |ldiff, index|
+          if ldiff.operation == DiffLine::DELETE
             # 删除行: 由原作者 review
-            reviewer = ldiff.sLine.user
+            reviewer = ldiff.source_line.user
             record_reviewer(fdiff, reviewer, 1)
-          elsif ldiff.operation == BlameLineDiff::ADD
+          elsif ldiff.operation == DiffLine::ADD
             # 新增行
             if reviewer != nil
               # 紧随删除，由删除行的原作者 review
               lines += 1
             else
               # 非紧随删除，由 configuration 决定谁来 review
-              reviewer = @configuration.reviewer_of_file(fdiff.filename)
+              reviewer = @configuration.reviewer_of_file(fdiff.file_name)
             record_reviewer(fdiff, reviewer, 1)
             end
           else
@@ -114,7 +113,7 @@ module GitReviewer
           end
 
           # 最后一行
-          if index == fdiff.diffLines.count - 1 && reviewer != nil
+          if index == fdiff.diff_lines.count - 1 && reviewer != nil
             record_reviewer(fdiff, reviewer, lines)
           end
         end
@@ -123,17 +122,17 @@ module GitReviewer
 
     def record_author(fdiff, ldiff)
       author = ""
-      if ldiff.operation == BlameLineDiff::DELETE
-        author = ldiff.sLine.user
+      if ldiff.operation == DiffLine::DELETE
+        author = ldiff.source_line.user
       else
-        author = ldiff.tLine.user
+        author = ldiff.target_line.user
       end
 
       item = @author_results[author]
       if item == nil
-        item = AnalyzeResult.new(author)
+        item = ResultItem.new(author)
       end
-      item.add_file_name(fdiff.filename)
+      item.add_file_name(fdiff.file_name)
       item.add_line_count(1)
       @author_results[author] = item
     end
@@ -144,9 +143,9 @@ module GitReviewer
       end
       item = @reviewer_results[reviewer]
       if item == nil
-        item = AnalyzeResult.new(reviewer)
+        item = ResultItem.new(reviewer)
       end
-      item.add_file_name(fdiff.filename)
+      item.add_file_name(fdiff.file_name)
       item.add_line_count(lines)
       @reviewer_results[reviewer] = item
     end

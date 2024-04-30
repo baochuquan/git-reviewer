@@ -1,7 +1,7 @@
 require 'set'
 
 module GitReviewer
-  class AnalyzeResult
+  class ResultItem
     attr_accessor :name
     attr_accessor :file_count
     attr_accessor :line_count
