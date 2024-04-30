@@ -8,7 +8,7 @@ module GitReviewer
     attr_accessor :target
     attr_accessor :analyze_author
     attr_accessor :analyze_reviewer
-    attr_accessor :verbose
+
 
     attr_accessor :analyzer
 
@@ -17,8 +17,8 @@ module GitReviewer
       @target = target
       @analyze_author = analyze_author
       @analyze_reviewer = analyze_reviewer
-      @verbose = verbose
       @analyzer = Analyzer.new(source, target)
+      Printer.verbose = verbose
     end
 
     def execute
@@ -49,7 +49,7 @@ module GitReviewer
       end
 
       table = Terminal::Table.new do |t|
-        t.title = "The authors involved in the code changes"
+        t.title = "Relevant authors involved in code changes"
         t.headings = ["Related Author", "File Count", "File Ratio", "Line Count", "Line Ratio"]
         t.rows = output_rows
       end
@@ -73,7 +73,7 @@ module GitReviewer
       end
 
       table = Terminal::Table.new do |t|
-        t.title = "Suggested code reviewers and their proportions"
+        t.title = "Suggested reviewers for code changes."
         t.headings = ["Suggested Reviewer", "File Count", "File Ratio", "Line Count", "Line Ratio"]
         t.rows = output_rows
       end

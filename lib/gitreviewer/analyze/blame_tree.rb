@@ -38,6 +38,7 @@ module GitReviewer
     end
   end
 
+  # BlameLine
   class BlameLine
     attr_accessor :hash
     attr_accessor :user

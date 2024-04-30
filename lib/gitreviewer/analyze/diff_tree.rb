@@ -10,7 +10,7 @@ module GitReviewer
 
     attr_accessor :operation
     attr_accessor :file_name
-    attr_accessor :diff_lines    #DiffLine
+    attr_accessor :diff_lines
 
     attr_writer :binary
 

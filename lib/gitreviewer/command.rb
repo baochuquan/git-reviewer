@@ -10,6 +10,7 @@ require_relative './option/analyze_option'
 module GitReviewer
 
   class Command < CLAide::Command
+
     self.abstract_command = false
 
     self.description = <<-DESC
@@ -23,10 +24,8 @@ module GitReviewer
         ['--init', 'Initialize the code review configuration file of the Git repository. It will generate a `gitreviewer.json` file if needed.'],
         ['--target', 'The target branch to be analyzed, which is the same as the target branch selected when creating a Merge Request or Pull Request.'],
         ['--source', 'Optional, if not specified, the default is the current branch pointed to by Git HEAD. The source branch to be analyzed, which is the same as the source branch selected when creating a Merge Request or Pull Request. '],
-        ['--analyze-author', 'Only analyze relevant authors involved in code changes.'],
-        ['--analyze-reviewer', 'Only analyze the proportion of code reviewers.'],
-        ['--verbose', 'Show more details when executing commands.'],
-        ['--version', 'Show version of git-reviewer.']
+        ['--author', 'Only analyze relevant authors involved in code changes.'],
+        ['--reviewer', 'Only analyze the proportion of code reviewers.'],
     ].concat(super)
     end
 
@@ -34,17 +33,14 @@ module GitReviewer
       @init = argv.flag?('init', false)
       @target = argv.option('target')
       @source = argv.option('source')
-      @analyze_reviewer = argv.flag?('analyze-reviewer', false)
-      @analyze_author = argv.flag?('analyze-author', false)
-      @verbose = argv.flag?('verbose', false)
-      @version = argv.flag?('version', false)
-      @help = argv.flag?('help', false)
+      @analyze_reviewer = argv.flag?('reviewer', false)
+      @analyze_author = argv.flag?('author', false)
       super
     end
 
     def run
       # 处理 help 选项
-      if @help
+      if @help_arg
         help!
         return
       end
@@ -100,8 +96,12 @@ module GitReviewer
           Printer.red "Error: target branch `#{@target}` not exist."
           exit 1
         end
+        # source、target 判重
+        if @source == @target
+          Printer.red "Error: source branch and target branch should not be the same."
+          exit 1
+        end
       end
-
 
       # 执行分析
       analyzeOption = AnalyzeOption.new(@source, @target, @analyze_author, @analyze_reviewer, @verbose)

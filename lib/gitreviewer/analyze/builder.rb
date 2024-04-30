@@ -19,27 +19,43 @@ module GitReviewer
     end
 
     def build
-      # 检查环境
-      check_environment
       # 遍历分支改动的每个文件，得到 BlameFile 数组
       files = Checker.diff_files(@source_branch, @target_branch)
-      if files == nil or files.count == 0
-        Printer.red ""
+      header_length = 0
+
+      if files == nil || files.count == 0
+        Printer.warning "Warning: there are no analyzable differences between the target branch and source branch."
+        exit 0
       else
-        Printer.yellow "============ Diff files between source<#{@source_branch}> and target<#{@target_branch}> ============"
-        Printer.put files
-        Printer.put "\n"
+        header = "============ Diff files between source<#{@source_branch}> and target<#{@target_branch}> ============"
+        header_length = header.length
+        footer = "=" * header_length
+
+        Printer.verbose_put header
+        Printer.verbose_put files
+        Printer.verbose_put footer
+        Printer.verbose_put "\n"
       end
 
       # 构建 source branch 的 BlameBranch
-      Printer.yellow "============ source BlameFiles ============"
+      source_header_title = " Source Blame Files "
+      target_header_title = " Target Blame Files "
+      source_prefix_length = (header_length - source_header_title.length) / 2
+      target_prefix_length = (header_length - target_header_title.length) / 2
+      source_header = "=" * source_prefix_length + source_header_title + "=" * (header_length - source_prefix_length - source_header_title.length)
+      target_header = "=" * target_prefix_length + target_header_title + "=" * (header_length - target_prefix_length - target_header_title.length)
+      footer = "=" * header_length
+
+      Printer.verbose_put source_header
       @source_blame = blame_branch(@source_branch, files)
-      Printer.put "\n"
+      Printer.verbose_put footer
+      Printer.verbose_put "\n"
 
       # 构建 target branch 的 BlameBranch
-      Printer.yellow "============ target BlameFiles ============"
+      Printer.verbose_put target_header
       @target_blame = blame_branch(@target_branch, files)
-      Printer.put "\n"
+      Printer.verbose_put footer
+      Printer.verbose_put "\n"
 
       # 构建 diff_files
       @diff_files = []
@@ -48,23 +64,6 @@ module GitReviewer
         # Diff 时需要交换 tfile 和 sfile
         myers = Myers.new(tfile, sfile)
          @diff_files.append(myers.resolve)
-      end
-    end
-
-    def check_environment
-      # 检查当前是否是 Git 仓库
-      if !Checker.is_git_repository_exist?
-        raise "The command execution environment must be a git repository."
-      end
-
-      # 检查原始分支是否存在
-      if !Checker.is_git_branch_exist?(@source_branch)
-        raise "The source branch does not exist in the current git repository."
-      end
-
-      # 检查目标分支是否存在
-      if !Checker.is_git_branch_exist?(@target_branch)
-        raise "The target branch does not exist in the current git repository."
       end
     end
 
@@ -83,7 +82,7 @@ module GitReviewer
           bf = BlameFile.new(file_name, [], false, false)
         end
         blame_files.append(bf)
-        Printer.put "BlameFile -> #{bf.file_name}"
+        Printer.verbose_put "#{bf.file_name}"
       end
       result = BlameBranch.new(branch, blame_files)
       return result

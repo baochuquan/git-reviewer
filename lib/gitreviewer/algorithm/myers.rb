@@ -159,10 +159,10 @@ module GitReviewer
       # 确定结果
       result = DiffFile.new(source.file_name, diff_result, operation, binary)
 
-      # 打印内容
-      Printer.put "#{result.format_file_name}"
-      Printer.put "#{result.format_property}"
-      Printer.put "#{result.format_line_diff}"
+      # # 打印内容
+      # Printer.put "#{result.format_file_name}"
+      # Printer.put "#{result.format_property}"
+      # Printer.put "#{result.format_line_diff}"
 
       return result
     end
