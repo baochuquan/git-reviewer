@@ -64,9 +64,5 @@ module GitReviewer
     def format_line
       format('%5d', line)
     end
-
-    def format_user
-      user.rjust(16)
-    end
   end
 end

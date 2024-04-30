@@ -46,16 +46,25 @@ module GitReviewer
       target_header = "=" * target_prefix_length + target_header_title + "=" * (header_length - target_prefix_length - target_header_title.length)
       footer = "=" * header_length
 
+      # 打印 source branch Log
       Printer.verbose_put source_header
-      @source_blame = blame_branch(@source_branch, files)
+      files.each do |file_name|
+        Printer.verbose_put "#{file_name}"
+      end
       Printer.verbose_put footer
       Printer.verbose_put "\n"
 
-      # 构建 target branch 的 BlameBranch
+      # 打印 target branch Log
       Printer.verbose_put target_header
-      @target_blame = blame_branch(@target_branch, files)
+      files.each do |file_name|
+        Printer.verbose_put "#{file_name}"
+      end
       Printer.verbose_put footer
       Printer.verbose_put "\n"
+
+      # 构建 source branch & target branch
+      @source_blame = blame_branch(@source_branch, files)
+      @target_blame = blame_branch(@target_branch, files)
 
       # 构建 diff_files
       @diff_files = []
@@ -63,8 +72,11 @@ module GitReviewer
         tfile = @target_blame.blame_files[index]
         # Diff 时需要交换 tfile 和 sfile
         myers = Myers.new(tfile, sfile)
-         @diff_files.append(myers.resolve)
+        @diff_files.append(myers.resolve)
       end
+
+      # 打印 Code Diff
+
     end
 
     def blame_branch(branch, files)
@@ -82,7 +94,6 @@ module GitReviewer
           bf = BlameFile.new(file_name, [], false, false)
         end
         blame_files.append(bf)
-        Printer.verbose_put "#{bf.file_name}"
       end
       result = BlameBranch.new(branch, blame_files)
       return result
@@ -124,13 +135,6 @@ module GitReviewer
       line = line.strip
       # 结果
       result = BlameLine.new(hash, user, date, line, code)
-      # Printer.put "UUID: #{result.uuid}"
-      # Printer.put "Hash: #{result.hash}"
-      # Printer.put "User: #{result.user}"
-      # Printer.put "Date: #{result.date}"
-      # Printer.put "Line: #{result.line}"
-      # Printer.put "Code: #{result.code}"
-      # Printer.put "--------------------------------------------------------------------------------------------------------------"
       return result
     end
   end

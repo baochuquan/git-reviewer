@@ -32,19 +32,23 @@ module GitReviewer
       @builder.build
 
       if @builder.source_blame.blame_files.count == 0
-        raise "blameFiles of sourceBlameBranch is zero"
+        Printer.warning "Warning: no blame file for source blame branch<#{@source_branch}>"
+        exit 1
       end
 
       if @builder.target_blame.blame_files.count == 0
-        raise "blameFiles of targetBlameBranch is zero"
+        Printer.warning "Warning: no blame file for target blame branch<#{@target_branch}>"
+        exit 1
       end
 
       if @builder.source_blame.blame_files.count != @builder.target_blame.blame_files.count
-        raise "xxxx"
+        Printer.red "Error: internal error. The number of files is not equal."
+        exit 1
       end
 
       if @builder.diff_files == nil
-        raise "diffs of builder is nil"
+        Printer.red "Error: internal error. The diff files of builder is nil."
+        exit 1
       end
     end
 
@@ -67,11 +71,6 @@ module GitReviewer
       setup_configuration
       analyze_author
       analyze_reviewer
-
-    #   print_author_result
-    #   print "\n"
-    #   print_reviewer_result
-    #   print "\n"
     end
 
     def analyze_author
