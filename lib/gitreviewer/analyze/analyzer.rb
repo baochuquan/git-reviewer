@@ -53,17 +53,17 @@ module GitReviewer
     end
 
     def setup_configuration
-      file_name = ".gitreviewer.json"
+      file_name = ".gitreviewer.yml"
       file_exist = File.exist?(file_name)
       # 检测配置文件
       if !file_exist
-        Printer.red "Error: `.gitreviewer.json` not exist in current directory."
+        Printer.red "Error: `.gitreviewer.yml` not exist in current directory. Please execute `git reviewer --init` first."
         exit 1
       end
       # 解析配置文件
-      file_content = File.read(file_name)
-      data = JSON.parse(file_content)
-      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_reviewer_folders'], data['ignore_reviewer_files'])
+      file_content = YAML.load_file(file_name)
+      data = file_content.inspect
+      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_folders'], data['ignore_files'])
     end
 
     def execute

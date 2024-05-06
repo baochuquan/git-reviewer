@@ -4,32 +4,32 @@ module GitReviewer
     attr_accessor :project_owner                # String
     attr_accessor :folder_owner                 # Array<FolderOwner>
     attr_accessor :file_owner                   # Array<FileReOwner>
-    attr_accessor :ignore_reviewer_files        # Array<String>
-    attr_accessor :ignore_reviewer_folders      # Array<String>
+    attr_accessor :ignore_files        # Array<String>
+    attr_accessor :ignore_folders      # Array<String>
 
-    def initialize(project_owner, folder_owner, file_owner, ignore_reviewer_files, ignore_reviewer_folders)
+    def initialize(project_owner, folder_owner, file_owner, ignore_files, ignore_folders)
       @project_owner = project_owner
       @folder_owner = folder_owner
       @file_owner = file_owner
-      @ignore_reviewer_files = ignore_reviewer_files
-      @ignore_reviewer_folders = ignore_reviewer_folders
+      @ignore_files = ignore_files
+      @ignore_folders = ignore_folders
     end
 
     def to_hash
       {
-        project_owner: @project_owner,
-        folder_owner: @folder_owner.map(&:to_hash),
-        file_owner: @file_owner.map(&:to_hash),
-        ignore_reviewer_files: @ignore_reviewer_files,
-        ignore_reviewer_folders: @ignore_reviewer_folders
+        "project_owner": @project_owner,
+        "folder_owner": @folder_owner.map(&:to_hash),
+        "file_owner": @file_owner.map(&:to_hash),
+        "ignore_files": @ignore_files,
+        "ignore_folders": @ignore_folders
       }
     end
 
     def reviewer_of_file(file_name)
-      if @ignore_reviewer_files.include?(file_name)
+      if @ignore_files.include?(file_name)
         return nil
       end
-      if @ignore_reviewer_folders.any?{ |folder| file_name.start_with?(folder) }
+      if @ignore_folders.any?{ |folder| file_name.start_with?(folder) }
         return nil
       end
 
@@ -58,8 +58,8 @@ module GitReviewer
 
     def to_hash
       {
-        path: @path,
-        owner: @owner
+        "path": @path,
+        "owner": @owner
       }
     end
   end
@@ -75,8 +75,8 @@ module GitReviewer
 
     def to_hash
       {
-        path: @path,
-        owner: @owner
+        "path": @path,
+        "owner": @owner
       }
     end
   end
