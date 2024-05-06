@@ -4,15 +4,15 @@ module GitReviewer
     attr_accessor :project_owner                # String
     attr_accessor :folder_owner                 # Array<FolderOwner>
     attr_accessor :file_owner                   # Array<FileReOwner>
-    attr_accessor :ignore_reviewer_files        # Array<String>
-    attr_accessor :ignore_reviewer_folders      # Array<String>
+    attr_accessor :ignore_files                 # Array<String>
+    attr_accessor :ignore_folders               # Array<String>
 
-    def initialize(project_owner, folder_owner, file_owner, ignore_reviewer_files, ignore_reviewer_folders)
+    def initialize(project_owner, folder_owner, file_owner, ignore_files, ignore_folders)
       @project_owner = project_owner
-      @folder_owner = folder_owner
-      @file_owner = file_owner
-      @ignore_reviewer_files = ignore_reviewer_files
-      @ignore_reviewer_folders = ignore_reviewer_folders
+      @folder_owner = folder_owner.map { |hash| FolderOwner.new(hash["path"], hash["owner"]) }
+      @file_owner = file_owner.map { |hash| FileOwner.new(hash["path"], hash["owner"]) }
+      @ignore_files = ignore_files
+      @ignore_folders = ignore_folders
     end
 
     def to_hash
@@ -20,29 +20,39 @@ module GitReviewer
         project_owner: @project_owner,
         folder_owner: @folder_owner.map(&:to_hash),
         file_owner: @file_owner.map(&:to_hash),
-        ignore_reviewer_files: @ignore_reviewer_files,
-        ignore_reviewer_folders: @ignore_reviewer_folders
+        ignore_files: @ignore_files,
+        ignore_folders: @ignore_folders
       }
     end
 
-    def reviewer_of_file(file_name)
-      if @ignore_reviewer_files.include?(file_name)
-        return nil
+    def is_ignore?(file_name)
+      if @ignore_files != nil && @ignore_files.include?(file_name)
+        return true
       end
-      if @ignore_reviewer_folders.any?{ |folder| file_name.start_with?(folder) }
+      if @ignore_folders != nil && @ignore_folders.any?{ |folder| !folder.empty? && file_name.start_with?(folder) }
+        return true
+      end
+      return false
+    end
+
+    def reviewer_of_file(file_name)
+      if is_ignore?(file_name)
         return nil
       end
 
-      fowner = @file_owner.select { |owner| owner.path == file_name }.first
-      if fowner != nil
+      fowner = @file_owner.select { |owner| !owner.path.empty? && owner.path == file_name }.first
+      if fowner != nil && fowner.owner != nil
         return fowner.owner
       end
 
-      downer = @folder_owner.select { |owner| file_name.start_with?(owner.path) }.first
-      if downer != nil
+      downer = @folder_owner.select { |owner| !owner.path.empty? && file_name.start_with?(owner.path) }.first
+      if downer != nil && downer.owner != nil
         return downer.owner
       end
 
+      if @project_owner == nil || @project_owner.empty?
+        return "<project owner>"
+      end
       return @project_owner
     end
   end

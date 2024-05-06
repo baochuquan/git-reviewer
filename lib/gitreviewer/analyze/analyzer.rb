@@ -53,17 +53,16 @@ module GitReviewer
     end
 
     def setup_configuration
-      file_name = ".gitreviewer.json"
+      file_name = ".gitreviewer.yml"
       file_exist = File.exist?(file_name)
       # 检测配置文件
       if !file_exist
-        Printer.red "Error: `.gitreviewer.json` not exist in current directory."
+        Printer.red "Error: `.gitreviewer.yml` not exist in current directory. Please execute `git reviewer --init` first."
         exit 1
       end
       # 解析配置文件
-      file_content = File.read(file_name)
-      data = JSON.parse(file_content)
-      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_reviewer_folders'], data['ignore_reviewer_files'])
+      data = YAML.load_file(file_name)
+      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_files'], data['ignore_folders'])
     end
 
     def execute
@@ -121,10 +120,17 @@ module GitReviewer
     end
 
     def record_author(fdiff, ldiff)
+      file_name = fdiff.file_name
+      if @configuration.is_ignore?(file_name)
+        return
+      end
+
       author = ""
       if ldiff.operation == DiffLine::DELETE
+        # 删除类型，记录为原始作者
         author = ldiff.source_line.user
       else
+        # 新增类型，记录为最新作者
         author = ldiff.target_line.user
       end
 
@@ -132,7 +138,7 @@ module GitReviewer
       if item == nil
         item = ResultItem.new(author)
       end
-      item.add_file_name(fdiff.file_name)
+      item.add_file_name(file_name)
       item.add_line_count(1)
       @author_results[author] = item
     end
@@ -141,11 +147,16 @@ module GitReviewer
       if reviewer == nil
         return
       end
+      file_name = fdiff.file_name
+      if @configuration.is_ignore?(file_name)
+        return
+      end
+
       item = @reviewer_results[reviewer]
       if item == nil
         item = ResultItem.new(reviewer)
       end
-      item.add_file_name(fdiff.file_name)
+      item.add_file_name(file_name)
       item.add_line_count(lines)
       @reviewer_results[reviewer] = item
     end
