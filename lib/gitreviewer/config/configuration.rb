@@ -9,8 +9,8 @@ module GitReviewer
 
     def initialize(project_owner, folder_owner, file_owner, ignore_files, ignore_folders)
       @project_owner = project_owner
-      @folder_owner = folder_owner
-      @file_owner = file_owner
+      @folder_owner = folder_owner.map { |hash| FolderOwner.new(hash["path"], hash["owner"]) }
+      @file_owner = file_owner.map { |hash| FileOwner.new(hash["path"], hash["owner"]) }
       @ignore_files = ignore_files
       @ignore_folders = ignore_folders
     end
@@ -25,25 +25,34 @@ module GitReviewer
       }
     end
 
+    def is_ignore?(file_name)
+      if @ignore_files != nil && @ignore_files.include?(file_name)
+        return true
+      end
+      if @ignore_folders != nil && @ignore_folders.any?{ |folder| !folder.empty? && file_name.start_with?(folder) }
+        return true
+      end
+      return false
+    end
+
     def reviewer_of_file(file_name)
-      if @ignore_files.include?(file_name)
+      if is_ignore?(file_name)
         return nil
       end
 
-      if @ignore_folders.any?{ |folder| file_name.start_with?(folder) }
-        return nil
-      end
-
-      fowner = @file_owner.select { |owner| owner.path == file_name }.first
-      if fowner != nil
+      fowner = @file_owner.select { |owner| !owner.path.empty? && owner.path == file_name }.first
+      if fowner != nil && fowner.owner != nil
         return fowner.owner
       end
 
-      downer = @folder_owner.select { |owner| file_name.start_with?(owner.path) }.first
-      if downer != nil
+      downer = @folder_owner.select { |owner| !owner.path.empty? && file_name.start_with?(owner.path) }.first
+      if downer != nil && downer.owner != nil
         return downer.owner
       end
 
+      if @project_owner == nil || @project_owner.empty?
+        return "<project owner>"
+      end
       return @project_owner
     end
   end

@@ -35,6 +35,7 @@ module GitReviewer
       @source = argv.option('source')
       @analyze_reviewer = argv.flag?('reviewer', false)
       @analyze_author = argv.flag?('author', false)
+      @version = argv.flag?('version', false)
       super
     end
 
@@ -47,7 +48,7 @@ module GitReviewer
 
       # 处理 version 选项
       if @version
-        puts "git-reviewer #{GitReviewer::VERSION}"
+        Printer.put "git-reviewer #{GitReviewer::VERSION}"
         return
       end
 

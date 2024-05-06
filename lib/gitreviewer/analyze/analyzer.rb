@@ -62,7 +62,7 @@ module GitReviewer
       end
       # 解析配置文件
       data = YAML.load_file(file_name)
-      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_folders'], data['ignore_files'])
+      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_files'], data['ignore_folders'])
     end
 
     def execute
@@ -120,10 +120,17 @@ module GitReviewer
     end
 
     def record_author(fdiff, ldiff)
+      file_name = fdiff.file_name
+      if @configuration.is_ignore?(file_name)
+        return
+      end
+
       author = ""
       if ldiff.operation == DiffLine::DELETE
+        # 删除类型，记录为原始作者
         author = ldiff.source_line.user
       else
+        # 新增类型，记录为最新作者
         author = ldiff.target_line.user
       end
 
@@ -131,7 +138,7 @@ module GitReviewer
       if item == nil
         item = ResultItem.new(author)
       end
-      item.add_file_name(fdiff.file_name)
+      item.add_file_name(file_name)
       item.add_line_count(1)
       @author_results[author] = item
     end
@@ -140,11 +147,16 @@ module GitReviewer
       if reviewer == nil
         return
       end
+      file_name = fdiff.file_name
+      if @configuration.is_ignore?(file_name)
+        return
+      end
+
       item = @reviewer_results[reviewer]
       if item == nil
         item = ResultItem.new(reviewer)
       end
-      item.add_file_name(fdiff.file_name)
+      item.add_file_name(file_name)
       item.add_line_count(lines)
       @reviewer_results[reviewer] = item
     end
