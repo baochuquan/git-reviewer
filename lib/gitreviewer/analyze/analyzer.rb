@@ -61,8 +61,7 @@ module GitReviewer
         exit 1
       end
       # 解析配置文件
-      file_content = YAML.load_file(file_name)
-      data = file_content.inspect
+      data = YAML.load_file(file_name)
       @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_folders'], data['ignore_files'])
     end
 

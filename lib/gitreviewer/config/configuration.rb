@@ -4,8 +4,8 @@ module GitReviewer
     attr_accessor :project_owner                # String
     attr_accessor :folder_owner                 # Array<FolderOwner>
     attr_accessor :file_owner                   # Array<FileReOwner>
-    attr_accessor :ignore_files        # Array<String>
-    attr_accessor :ignore_folders      # Array<String>
+    attr_accessor :ignore_files                 # Array<String>
+    attr_accessor :ignore_folders               # Array<String>
 
     def initialize(project_owner, folder_owner, file_owner, ignore_files, ignore_folders)
       @project_owner = project_owner
@@ -17,11 +17,11 @@ module GitReviewer
 
     def to_hash
       {
-        "project_owner": @project_owner,
-        "folder_owner": @folder_owner.map(&:to_hash),
-        "file_owner": @file_owner.map(&:to_hash),
-        "ignore_files": @ignore_files,
-        "ignore_folders": @ignore_folders
+        project_owner: @project_owner,
+        folder_owner: @folder_owner.map(&:to_hash),
+        file_owner: @file_owner.map(&:to_hash),
+        ignore_files: @ignore_files,
+        ignore_folders: @ignore_folders
       }
     end
 
@@ -29,6 +29,7 @@ module GitReviewer
       if @ignore_files.include?(file_name)
         return nil
       end
+
       if @ignore_folders.any?{ |folder| file_name.start_with?(folder) }
         return nil
       end
@@ -58,8 +59,8 @@ module GitReviewer
 
     def to_hash
       {
-        "path": @path,
-        "owner": @owner
+        path: @path,
+        owner: @owner
       }
     end
   end
@@ -75,8 +76,8 @@ module GitReviewer
 
     def to_hash
       {
-        "path": @path,
-        "owner": @owner
+        path: @path,
+        owner: @owner
       }
     end
   end
