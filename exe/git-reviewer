@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/gitreviewer'
+require 'gitreviewer'
 
 GitReviewer::Command.run(ARGV)
