@@ -1,5 +1,5 @@
-require_relative '../config/configuration'
-require_relative '../utils/printer'
+require 'gitreviewer/config/configuration'
+require 'gitreviewer/utils/printer'
 require 'yaml'
 
 

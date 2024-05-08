@@ -1,5 +1,5 @@
-require_relative 'blame_tree'
-require_relative '../utils/printer'
+require 'gitreviewer/analyze/blame_tree'
+require 'gitreviewer/utils/printer'
 require 'terminal-table'
 
 module GitReviewer

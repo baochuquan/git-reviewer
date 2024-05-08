@@ -1,10 +1,10 @@
 require 'open3'
-require_relative 'blame_tree'
-require_relative 'builder'
-require_relative '../utils/printer'
-require_relative '../utils/checker'
-require_relative '../config/configuration'
-require_relative 'result_item'
+require 'gitreviewer/analyze/blame_tree'
+require 'gitreviewer/analyze/builder'
+require 'gitreviewer/utils/printer'
+require 'gitreviewer/utils/checker'
+require 'gitreviewer/config/configuration'
+require 'gitreviewer/analyze/result_item'
 
 module GitReviewer
 

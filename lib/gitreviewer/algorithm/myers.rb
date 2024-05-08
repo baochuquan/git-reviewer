@@ -1,5 +1,5 @@
-require_relative '../analyze/blame_tree'
-require_relative '../analyze/diff_tree'
+require 'gitreviewer/analyze/blame_tree'
+require 'gitreviewer/analyze/diff_tree'
 
 module GitReviewer
   class Myers
