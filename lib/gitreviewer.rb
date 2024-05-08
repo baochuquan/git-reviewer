@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "gitreviewer/version"
+require "gitreviewer/version"
 
-module GitReviewer 
+module GitReviewer
   class Error < StandardError; end
   # Your code goes here...
   autoload :Command, 'gitreviewer/command'

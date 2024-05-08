@@ -1,11 +1,11 @@
 require 'claide'
-require_relative './analyze/blame_tree'
-require_relative './analyze/builder'
-require_relative './analyze/analyzer'
-require_relative './algorithm/myers'
-require_relative './option/init_option'
-require_relative './utils/checker'
-require_relative './option/analyze_option'
+require 'gitreviewer/analyze/blame_tree'
+require 'gitreviewer/analyze/builder'
+require 'gitreviewer/analyze/analyzer'
+require 'gitreviewer/algorithm/myers'
+require 'gitreviewer/option/init_option'
+require 'gitreviewer/utils/checker'
+require 'gitreviewer/option/analyze_option'
 
 module GitReviewer
 

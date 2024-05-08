@@ -8,7 +8,7 @@
             "cwd": "${workspaceFolder}",
             "command": "bundle exec ruby",
             "script": "${workspaceFolder}/exe/git-reviewer",
-            "args": ["--target=main", "--verbose"]
+            "args": ["--version"]
         }
     ]
 }
