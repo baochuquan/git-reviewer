@@ -123,7 +123,7 @@ module GitReviewer
 
     def record_author(fdiff, ldiff)
       file_name = fdiff.file_name
-      if @configuration.is_ignore?(file_name)
+      if @configuration.ignore?(file_name)
         return
       end
 
@@ -150,7 +150,7 @@ module GitReviewer
         return
       end
       file_name = fdiff.file_name
-      if @configuration.is_ignore?(file_name)
+      if @configuration.ignore?(file_name)
         return
       end
 

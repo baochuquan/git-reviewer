@@ -6,7 +6,6 @@
 ![Language](http://img.shields.io/badge/language-ruby-brightgreen.svg?style=flat)
 ![Tool](http://img.shields.io/badge/tool-homebrew-orange.svg?style=flat)
 ![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)
-# Git::Reviewer
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/git/reviewer`. To experiment with that code, run `bin/console` for an interactive prompt.
 
