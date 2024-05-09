@@ -62,7 +62,9 @@ module GitReviewer
       end
       # 解析配置文件
       data = YAML.load_file(file_name)
-      @configuration = Configuration.new(data['project_owner'], data['folder_owner'], data['file_owner'], data['ignore_files'], data['ignore_folders'])
+      folder_owner = data['folder_owner'].map { |hash| FolderOwner.new(hash["path"], hash["owner"]) }
+      file_owner = data['file_owner'].map { |hash| FileOwner.new(hash["path"], hash["owner"]) }
+      @configuration = Configuration.new(data['project_owner'], folder_owner, file_owner, data['ignore_files'], data['ignore_folders'])
     end
 
     def execute

@@ -9,8 +9,8 @@ module GitReviewer
 
     def initialize(project_owner, folder_owner, file_owner, ignore_files, ignore_folders)
       @project_owner = project_owner
-      @folder_owner = folder_owner.map { |hash| FolderOwner.new(hash["path"], hash["owner"]) }
-      @file_owner = file_owner.map { |hash| FileOwner.new(hash["path"], hash["owner"]) }
+      @folder_owner = folder_owner
+      @file_owner = file_owner
       @ignore_files = ignore_files
       @ignore_folders = ignore_folders
     end
