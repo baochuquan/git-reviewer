@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+
+# Exit cleanly from an early interrupt
+Signal.trap('INT') { exit 1 }
+
 require 'gitreviewer'
 
 GitReviewer::Command.run(ARGV)
