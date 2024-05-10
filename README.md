@@ -6,7 +6,7 @@
 ![Plugin](http://img.shields.io/badge/plugin-git-orange.svg?style=flat)
 ![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)
 
-[简体中文]()
+[简体中文](README-zh.md)
 
 Git Reviewer is a git plugin that solves a common problem in team collaborative development: **Who should review the code changes?**
 

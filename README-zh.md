@@ -6,7 +6,7 @@
 ![Plugin](http://img.shields.io/badge/plugin-git-orange.svg?style=flat)
 ![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)
 
-[English](https://github.com/baochuquan/git-reviewer)
+[English](README.md)
 
 Git Reviewer 是一款 git 插件，其解决了团队协作开发时普遍存在的一个问题：**代码改动应该由谁来进行代码审查？**
 
