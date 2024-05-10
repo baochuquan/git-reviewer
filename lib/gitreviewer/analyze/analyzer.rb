@@ -131,9 +131,13 @@ module GitReviewer
       if ldiff.operation == DiffLine::DELETE
         # 删除类型，记录为原始作者
         author = ldiff.source_line.user
-      else
+      elsif ldiff.operation == DiffLine::ADD
         # 新增类型，记录为最新作者
         author = ldiff.target_line.user
+      end
+
+      if author.empty?
+        return
       end
 
       item = @author_results[author]

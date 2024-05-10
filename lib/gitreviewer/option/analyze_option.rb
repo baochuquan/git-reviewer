@@ -73,7 +73,7 @@ module GitReviewer
       end
 
       table = Terminal::Table.new do |t|
-        t.title = "Suggested reviewers for code changes."
+        t.title = "Suggested reviewers for code changes"
         t.headings = ["Suggested Reviewer", "File Count", "File Ratio", "Line Count", "Line Ratio"]
         t.rows = output_rows
       end
