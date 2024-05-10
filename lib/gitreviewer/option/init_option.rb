@@ -40,7 +40,7 @@ module GitReviewer
       File.open('.gitreviewer.yml', 'w') do |file|
         file.write(content)
       end
-      Printer.put "`.gitreviewer.yml` has been created. If you want to customize settings, please edit this file.\n"
+      Printer.put "`.gitreviewer.yml` created successfully. If you want to customize settings, please edit this file.\n"
     end
 
     def deep_transform_keys_to_strings(value)
