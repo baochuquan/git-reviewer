@@ -3,7 +3,7 @@ PATH
   specs:
     git-reviewer (0.8.0)
       claide (~> 1.0.3)
-      terminal-table
+      terminal-table (~> 3.0.2)
 
 GEM
   remote: https://gems.ruby-china.com/
@@ -98,12 +98,13 @@ PLATFORMS
   x86_64-darwin-22
 
 DEPENDENCIES
+  claide (~> 1.0.3)
   debug
   git-reviewer!
   rake (~> 13.0)
   rspec (~> 3.0)
   solargraph
-  terminal-table
+  terminal-table (~> 3.0.2)
 
 BUNDLED WITH
    2.3.9

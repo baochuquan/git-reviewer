@@ -10,4 +10,5 @@ gem "rake", "~> 13.0"
 gem "rspec", "~> 3.0"
 gem 'debug'
 gem "solargraph"
-gem "terminal-table"
+gem "terminal-table", "~> 3.0.2"
+gem "claide", "~> 1.0.3"
