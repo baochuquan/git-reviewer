@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    git-reviewer (0.10.0)
+    git-reviewer (0.11.0)
       claide (~> 1.1.0)
+      nap (~> 1.1.0)
       terminal-table (~> 3.0.2)
 
 GEM
@@ -26,6 +27,7 @@ GEM
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
+    nap (1.1.0)
     nokogiri (1.13.10-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.10-x86_64-darwin)
