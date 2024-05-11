@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.6'
 
-  spec.add_dependency 'claide', '~> 1.0.3'
+  spec.add_dependency 'claide', '~> 1.1.0'
   spec.add_dependency 'terminal-table', '~> 3.0.2'
 
   # For more information and examples about making a new gem, check out our
