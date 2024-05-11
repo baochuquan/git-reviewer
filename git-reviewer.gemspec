@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'claide', '~> 1.1.0'
   spec.add_dependency 'terminal-table', '~> 3.0.2'
-  spec.add_dependency 'nap', '~> 1.1.0'
+  spec.add_dependency 'claide-plugins', '~> 0.9.2'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
