@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/baochuquan/git-reviewer"
   spec.metadata["changelog_uri"] = "https://github.com/baochuquan/git-reviewer"
 
-  spec.files         = Dir['{exe,lib}/**/*', 'LICENSE.txt', 'README.md', 'CHANGELOG.md']
+  spec.files         = Dir['{exe,lib}/**/*', 'LICENSE.txt', 'README.md', 'CHANGELOG.md', 'share/git-reviewer.1']
   spec.bindir = "exe"
   spec.executables = "git-reviewer"
   spec.require_paths = ["lib"]

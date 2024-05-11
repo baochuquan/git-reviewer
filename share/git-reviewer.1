@@ -1,0 +1,44 @@
+.TH GIT-REVIEWER 1 "DATE" "VERSION" "GIT-REVIEWER MANUAL"
+.SH NAME
+git-reviewer \- analyze who should review a Merge Request or Pull Request, and more.
+.SH SYNOPSIS
+.B git-reviewer
+.RI [ options ]
+.SH DESCRIPTION
+.B git-reviewer
+is a git plugin used to analyze who should review a Merge Request or Pull Request,
+and more details related to code modifications.
+.SH OPTIONS
+.TP
+.B \-\-init
+Initialize the code review configuration file of the Git repository. 
+It will generate a \`gitreviewer.yml\` file if needed.
+.TP
+.B \-\-target
+The target branch to be analyzed, which is the same as the target branch selected 
+when creating a Merge Request or Pull Request.
+.TP
+.B \-\-source
+Optional, if not specified, the default is the current branch pointed to by Git HEAD. 
+The source branch to be analyzed, which is the same as the source branch selected 
+when creating a Merge Request or Pull Request.
+.TP
+.B \-\-author
+Only analyze relevant authors involved in code changes.
+.TP
+.B \-\-reviewer
+Only analyze suggested reviewers for code changes.
+.TP
+.B \-\-version
+Show the version of the tool.
+.TP
+.B \-\-verbose
+Show more debugging information.
+.TP
+.B \-\-no-ansi
+Show output without ANSI codes.
+.TP
+.B \-\-help
+Show help banner of specified command.
+.SH AUTHOR
+Written by [Your Name].
