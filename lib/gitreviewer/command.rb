@@ -21,7 +21,7 @@ module GitReviewer
 
     def self.options
       [
-        ['--init', 'Initialize the code review configuration file of the Git repository. It will generate a `gitreviewer.yml` file if needed.'],
+        ['--init', 'Initialize the code review configuration file of the Git repository. It will generate a `.gitreviewer.yml` file if needed.'],
         ['--target', 'The target branch to be analyzed, which is the same as the target branch selected when creating a Merge Request or Pull Request.'],
         ['--source', 'Optional, if not specified, the default is the current branch pointed to by Git HEAD. The source branch to be analyzed, which is the same as the source branch selected when creating a Merge Request or Pull Request. '],
         ['--author', 'Only analyze relevant authors involved in code changes.'],
