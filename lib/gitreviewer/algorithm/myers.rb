@@ -116,7 +116,7 @@ module GitReviewer
         if index === 0 && s != 0
           # 所有相同字符，直到s
           (0..s - 1).each do |j|
-            diff_line = DiffLine.new(source.blame_lines[s], target.blame_lines[y_offset], DiffLine::UNCHANGE)
+            diff_line = DiffLine.new(source.blame_lines[j], target.blame_lines[y_offset], DiffLine::UNCHANGE)
             diff_result.append(diff_line)
             y_offset += 1
           end

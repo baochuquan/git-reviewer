@@ -104,7 +104,8 @@ module GitReviewer
       content = Checker.snapshot_of_blame_file(branch, file_name)
       # 遍历文件的每一行，得到 BlameLine 数组
       content.lines do |line|
-        blame_lines.append(blame_line(line))
+        result = blame_line(line)
+        blame_lines.append(result)
       end
 
       result = BlameFile.new(file_name, blame_lines, true, false)
